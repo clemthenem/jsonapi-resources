@@ -459,7 +459,11 @@ module JSONAPI
         # If you have direct access to the underlying id, you don't have to load the relationship
         # which can save quite a lot of time when loading a lot of data.
         # This does not apply to e.g. has_one :through relationships.
-        source.public_send("#{relationship.name}_id")
+        begin
+          source.public_send("#{relationship.name}_id")
+        rescue
+          source.public_send(relationship.name).try(:id)
+        end
       else
         source.public_send(relationship.name).try(:id)
       end
